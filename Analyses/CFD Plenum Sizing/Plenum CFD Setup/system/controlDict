@@ -1,0 +1,116 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2006                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+libs (turbulenceModelSchemes);
+
+application     	simpleFoam;
+
+startFrom       	latestTime;
+
+startTime       	0;
+
+stopAt          	endTime;
+
+endTime         	3800; // for initial velocity-inlet run; then set to larger number to converge with p0 inlet
+
+deltaT          	1;
+
+writeControl    	runTime;
+
+writeInterval   	25;
+
+purgeWrite      	2;
+
+writeFormat     	binary;
+
+writePrecision  	10;
+
+writeCompression 	off;
+
+timeFormat      	general;
+
+timePrecision   	8;
+
+runTimeModifiable 	true;
+
+//adjustTimeStep  	yes;
+
+//maxCo			1;
+
+functions
+{
+/*	vorticity
+	{
+		// required
+		type	vorticity;
+		libs	(fieldFunctionObjects);
+		// optional
+		//field           <inpField>;
+    		//result          <fieldResult>;
+    		//region          region0;
+    		//enabled         true;
+   		//log             false;
+    		//timeStart       0;
+    		//timeEnd         1000;
+    		//executeControl  timeStep;
+    		//executeInterval 1;
+    		writeControl    timeStep;
+    		writeInterval   $intvl;
+	}
+*/
+
+    flowRatePatch(name=inlet)
+    {
+        name            inlet;
+        type            surfaceFieldValue;
+        libs            ( "libfieldFunctionObjects.so" );
+        writeControl    timeStep;
+        writeInterval   1;
+        writeFields     false;
+        log             false;
+        regionType      patch;
+        fields          ( phi );
+        operation       sum;
+    }
+    flowRatePatch(name=outlet)
+    {
+        name            outlet;
+        type            surfaceFieldValue;
+        libs            ( "libfieldFunctionObjects.so" );
+        writeControl    timeStep;
+        writeInterval   1;
+        writeFields     false;
+        log             false;
+        regionType      patch;
+        fields          ( phi );
+        operation       sum;
+    }
+	
+    yPlus
+    {
+        type            yPlus;
+        libs            ( fieldFunctionObjects );
+        writeFields     yes;
+        executeControl  writeTime;
+        writeControl    writeTime;
+	}
+	
+}
+
+
+
+// ************************************************************************* //

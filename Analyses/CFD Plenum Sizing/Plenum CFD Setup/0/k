@@ -1,0 +1,90 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      k;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -2 0 0 0 0];
+
+/* 
+to calculate k
+
+k = (3/2)(U^2)(L^2) where U is the velocity at the inlet and I is the turbulence intensity
+
+5% used for case shown
+
+k = (1.5)(25^2)(0.05^2) = 2.34375
+*/
+
+internalField   uniform 1.0;;
+
+boundaryField
+{
+    outlet
+    {
+        type            zeroGradient; // outlets for all fields except pressure/velocity are ALWAYS zeroGradient
+    }
+
+    inlet
+    {
+        type        turbulentIntensityKineticEnergyInlet;
+		intensity   0.05;
+		value       $internalField;
+    }
+
+    casing
+    {
+       type            	kqRWallFunction; 
+        value           $internalField;
+    }
+	
+    frontHex
+    {
+        type            kqRWallFunction; 
+        value           $internalField;
+    }
+	
+	
+	hub
+    {
+        type            kqRWallFunction;
+        value           $internalField;
+    }
+	
+    outflowPipe
+    {
+        type            kqRWallFunction;
+        value           $internalField;
+    }
+
+    rearHex
+    {
+        type            kqRWallFunction;
+        value           $internalField;
+    }
+    
+    topHex
+    {
+        type            kqRWallFunction;
+        value           $internalField;
+    }
+        
+    wallsA
+    {
+        type            symmetry;
+    }
+            
+}
+
+
+// ************************************************************************* //

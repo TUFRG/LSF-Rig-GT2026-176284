@@ -1,0 +1,191 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                |
+| \\      /  F ield         | OpenFOAM GUI Project: creativeFields           |
+|  \\    /   O peration     | Version:  0.8.9.0                              |
+|   \\  /    A nd           | Web: www.c-fields.com                          |
+|    \\/     M anipulation  |                                                |
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+version	2;
+format	ascii;
+class	dictionary;
+location	"system";
+object	meshDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// general CFmesh refinment start
+maxCellSize	0.003;
+
+surfaceFile	"outputWithEdges.fms";
+
+boundaryLayers
+{
+    nLayers         2;
+    thicknessRatio  1.2;
+}
+objectRefinements
+{
+	boxRefine
+	{
+		type		box;
+		cellSize	0.004;
+		centre		(0 0.185 -0.7);
+		lengthX		0.3;
+		lengthY		0.2;
+		lengthZ		0.2;
+	}
+}
+/*	
+	boxRefine
+	{
+		type 		box;
+		cellSize	0.001;
+		centre		(0 0.35 -0.7);
+		lengthX		1;
+		lengthY		0.2;
+		lengthZ		0.1;
+	}		
+}
+
+localRefinement
+	{
+		"casing"
+		{
+		cellSize 0.0008;
+		//additionalRefinmentLevels 1;
+		//refinmentThickness 4.5;
+		}
+	}
+localRefinement
+        {
+                "wallsA"
+                {
+                cellSize 0.0008;
+                //additionalRefinmentLevels 1;
+                //refinmentThickness 4.5;
+                }
+        }
+/*
+objectRefinements
+{
+	boxRefine
+	{
+		type		box;
+		cellSize	0.004;
+		centre		(0 0.143268 -1.325);
+		lengthX		1.198064;
+		lengthY		1.791924;
+		lengthZ		4.20793;
+	}
+}
+/*	
+localRefinement
+	{
+		"rearHex"
+		{
+		cellSize 0.005;
+		//additionalRefinmentLevels 1;
+		//refinmentThickness 4.5;
+		}
+	}
+	
+localRefinement
+	{
+		"wallsA"
+		{
+		cellSize 0.005;
+		//additionalRefinmentLevels 1;
+		//refinmentThickness 4.5;
+		}
+	}
+*/
+/*
+localRefinement
+	{
+		"outflowDist"
+		{
+		cellSize 0.01;
+		additionalRefinmentLevels 3;
+		refinmentThickness 1.2;
+		}
+	}		
+
+// blower, ceiling, floor, nacelleTestSection, outflowDist,
+// outlet, pillars, redistEast, redistNorth, wallEast, wallNorth,
+// wallSouth, wallWest
+
+objectRefinements
+{
+	fineRefine1
+	{
+		type		box;
+		cellSize	0.015;
+		centre		($nacPosA $nacY $nacZ);
+		lengthX		$nacLengX;
+		lengthY		1.500;
+		lengthZ		$lengZ;
+	}
+	
+	fineRefine2
+	{
+		type		box;
+		cellSize	0.03;
+		centre		($nacPosB $nacY $nacZ);
+		lengthX		$nacLengXb;
+		lengthY		2;
+		lengthZ		$lengZ;
+	}
+	
+
+	fineRefine3
+	{
+		type		box;
+		cellSize	0.05;
+		centre		($nacPosC $nacY $nacZ);
+		lengthX		$nacLengXc; 
+		lengthY		2.5;
+		lengthZ		$lengZ;
+	}
+	
+	floorRefine
+	{
+		type		box;
+		cellSize	0.05;
+		centre		(4.8 0.56 $nacZ);
+		lengthX		1; 
+		lengthY		2.5;
+		lengthZ		0.25;
+	}
+*/
+/*
+	roomRefine1		//set room cell size on nacelle side smaller than rest of room
+	{
+		type		box;
+		cellSize	75;
+		centre		(0 4950 -2500);
+		lengthX		2200; 
+		lengthY		7000; // Change this value
+		lengthZ		6200;
+	}
+	
+	roomRefine2		//set room cell size on nacelle side smaller than rest of room
+	{
+		type		box;
+		cellSize	50;
+		centre		(0 4950 -2500);
+		lengthX		2000; 
+		lengthY		5000; // Change this value
+		lengthZ		6200;
+	}
+	
+*/
+
+
+//}
+
+
+// ************************************************************************* //

@@ -1,0 +1,79 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version: 2212                                   |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      epsilon;
+}
+
+dimensions      [0 2 -3 0 0 0 0];
+//Cu = 0.09
+
+//epsilon = Cu((k^(3/2))/l) = 0.09((2.34375^(3/2))/(0.00784)) = 41.19
+
+internalField   uniform 25;
+
+boundaryField
+{
+    inlet
+    {
+		type            turbulentMixingLengthDissipationRateInlet;
+		mixingLength    0.01;
+		value           $internalField;
+    }
+
+    outlet
+    {
+        type            zeroGradient;
+    }
+
+    casing
+    {
+        type 		epsilonWallFunction;
+		value 			$internalField;
+    }
+
+    frontHex
+    {
+       type 		epsilonWallFunction;
+		value 		$internalField;
+    }
+	
+	hub
+    {
+       type 		epsilonWallFunction;
+		value 		$internalField;
+    }
+	
+	outflowPipe
+    {
+        type 		epsilonWallFunction;
+		value 			$internalField;
+    }
+	
+	rearHex
+    {
+        type 		epsilonWallFunction;
+		value 			$internalField;
+    }
+	
+	topHex
+    {
+       type 		epsilonWallFunction;
+		value 			$internalField;
+    }
+	
+	wallsA
+    {
+        type 		symmetry;
+    }
+}

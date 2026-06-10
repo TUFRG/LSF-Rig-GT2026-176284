@@ -10,7 +10,7 @@ If you use the materials contained in this repository, please cite the following
 
 ## Important
 
-Due to file upload size limitations, not all files could be included directly in this repository. Additional files can be accessed using the external link provided separately.
+Due to file upload size limitations, not all files could be included directly in this repository. Additional files can be accessed using the external link provided here: https://tufrg002.ecs.uwindsor.ca/index.php/s/4SxddGqZcooCFn8 
 
 To ensure the CAD assemblies function correctly, download the missing CAD files from the shared link and place them in their corresponding folders according to the directory structure provided. Failure to do so may result in missing references when opening product or assembly files.
 

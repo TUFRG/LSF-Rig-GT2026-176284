@@ -34,4 +34,4 @@ This folder contains the bill of materials (BOM), including purchase orders and 
 
 ### Analyses
 
-This folder contains the engineering analyses that informed the design decisions made during the development of the Low-Speed Fan Rig. Analyses were conducted using a combination of CATIA V5 R6-2021 and Ansys Mechanical
+This folder contains the engineering analyses that informed the design decisions made during the development of the Low-Speed Fan Rig. Analyses were conducted using a combination of CATIA V5 R6-2021 and Ansys Mechanical 2025 R2

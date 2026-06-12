@@ -1,0 +1,66 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      nut;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -1 0 0 0 0];
+
+/*
+
+nut = k / omega = 0.0234375/19.964892643 = 0.001173936
+
+*/
+
+internalField   uniform 0.001173936; // important for this to be consistent -- must be 
+									// nut = k / omega
+
+boundaryField
+{
+    outlet
+    {
+        type            calculated; // these should always be "calculated"
+        value			$internalField;
+    }
+
+    redistEast
+    {
+        type            calculated; // these should always be "calculated"
+        value			$internalField;
+    }
+
+    redistNorth
+    {
+        type            calculated; // these should always be "calculated"
+        value			$internalField;
+    }
+
+    "(blower|ceiling|couplerDuctingRect|ductingLarge|ductingSmall|floor|pillars|plenumSpaceclaim|wallEast|wallNorth|wallSouth|wallWest)"
+    {
+        type            nutUSpaldingWallFunction;
+        value           uniform 0;
+    }
+
+// LSF Rig test-section specific entries, use to change to slip on test section etc
+
+    "(hubFront|hubRear|nacelleInner|nacelleLipFront|nacelleLipInner|nacelleLipOuter|nacelleOuter|rearCasingInner|rearCasingOuter|nacelleOuterCurve|nacelleOuterTop|nacelleOuterCasingFront|nacelleOuterCasingFlange|nacelleOuterCasingRear|nacelleOuterCasingIntercept)"
+    {
+	//type		noSlip;		// slip;
+        type            nutUSpaldingWallFunction;
+        value           uniform 0;
+    }
+  
+}
+
+
+// ************************************************************************* //

@@ -1,0 +1,145 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+//
+//  Example below of wall plane, points can be found from paraview
+//
+//  P1 (px1,py1,pz1)
+//  o_________o P2 (px2,py2,pz2)
+//  |         | 
+//  |         |       Z ^
+//  |   CW    |         |
+//  |         |	      Y x--> X		y direction is into plane... check in paraview
+//  |_________|         
+//  o         o P3 (px3,py3,pz3)
+//  P4 (px4,py4,pz4)
+//
+//
+// define plane position based on geometry of wall
+//
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+//
+//	to visulize created faceZone:
+//		$ foamToVTK -faceSet $nameOfSet
+//
+
+// cell size for wall section USE SIZE TO ONLY CAPTURE ONE FACE
+boundCellSize 1e-6; // cell width at position of wall
+
+// cell size for nacelle area USE SIZE TO CAPTURE ONLY FACE
+naCellSize 1e-4;
+halfNaCellSize #eval{$naCellSize/2};
+radInternal 0.252;
+
+px1 2.52108; //position of xcoord on wall, see diagram above for positioning
+px2 3.52108;
+px3 3.52108;
+px4 2.52108;
+
+py1 1.05; //position of ycoord on wall, see diagram above for positioning
+py2 1.05;
+py3 1.05;
+py4 1.05;
+
+pz1 -1.39; //position of zcoord on wall, see diagram above for positioning
+pz2 -1.39;
+pz3 -2.39;
+pz4 -2.39;
+
+py1a #eval{$py1 + $boundCellSize}; // based on smallest cell height offset
+py2a #eval{$py2 + $boundCellSize}; // notice sign (+), plane offset into screen one cell width
+py3a #eval{$py3 + $boundCellSize};
+py4a #eval{$py4 + $boundCellSize};
+
+py1b #eval{$py1 - $boundCellSize}; // based on smallest cell height offset
+py2b #eval{$py2 - $boundCellSize}; // notice sign (-), plane offset out of screen one cell width
+py3b #eval{$py3 - $boundCellSize};
+py4b #eval{$py4 - $boundCellSize};
+
+// bounding equations for center of nacelle capture plane
+
+nx1 3;
+ny1 0.548077;
+nz1 -1.594;
+
+nx2 3;
+ny2 0.548077;
+nz2 -1.594;
+
+nx1a #eval{$nx1 - $halfNaCellSize};
+nx2a #eval{$nx2 + $halfNaCellSize};
+
+radOffset #eval{$radInternal - $naCellSize};
+
+actions
+(
+  
+    {
+        name    faceCentres;
+        type    faceSet;
+        action  new;
+        source  boxToFace;
+        sourceInfo
+        {
+        box ($px1 $py1b $pz3) ($px3 $py3a $pz1); // min ( x y z ) max ( x y z )
+        /*
+        insidePoints
+        (
+        	($px1 $py1a $pz1)
+        	($px2 $py2a $pz2)
+        	($px3 $py3a $pz3)
+        	($px4 $py4a $pz4)
+        	($px1 $py1b $pz1)
+        	($px2 $py2b $pz2)
+        	($px3 $py3b $pz3) 
+        	($px4 $py4b $pz4)
+        );
+        */
+        
+    	}
+    }
+    
+    {
+
+        name    vortexSlice; // zone can be entered easily with face thick cylinder implementation in the nacelle
+        type    faceSet;
+        action  new;
+        source  cylinderToFace;
+        p1 ($nx1a $ny1 $nz1); // set as center point start
+        p2 ($nx2a $ny2 $nz2); // set as center point thickness
+        radius $radOffset;;
+    	
+    }
+   
+    {
+        name    wallZone;	// name of faceZone
+        type    faceZoneSet;	// type name
+        action  new;		// action applied on faces
+        source  setToFaceZone;	// source name
+        faceSet	faceCentres;	// name of input faceSet
+    }
+
+    {
+        name    vortexSliceZone;	// name of faceZone
+        type    faceZoneSet;	// type name
+        action  new;		// action applied on faces
+        source  setToFaceZone;	// source name
+        faceSet	vortexSlice;	// name of input faceSet
+    }
+
+);
+
+
+// ************************************************************************* //

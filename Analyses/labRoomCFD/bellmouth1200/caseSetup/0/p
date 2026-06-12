@@ -1,0 +1,54 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      p;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -2 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    outlet
+    {
+        type            fixedValue;
+        value			$internalField;
+    }
+
+    redistNorth
+    {
+		type            zeroGradient;       
+    }
+	
+	redistEast
+    {
+		type            zeroGradient;       
+    }
+    
+    "(blower|ceiling|couplerDuctingRect|ductingLarge|ductingSmall|floor|pillars|plenumSpaceclaim|wallEast|wallNorth|wallSouth|wallWest)"
+    {
+        type            zeroGradient;
+    }
+
+// LSF Rig test-section specific entries, use to change to slip on test section etc
+
+    "(bellmouthInner|bellmouthLip|bellmouthOuter|centerCasingInner|centerCasingOuter|forwardCasingInner|forwardCasingOuter|frontHub|rearCasingInner|rearCasingOuter|rearHub)"
+    {
+	type		zeroGradient;
+    }
+
+}
+
+
+// ************************************************************************* //

@@ -1,0 +1,315 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                |
+| \\      /  F ield         | OpenFOAM GUI Project: creativeFields           |
+|  \\    /   O peration     | Version:  0.8.9.0                              |
+|   \\  /    A nd           | Web: www.c-fields.com                          |
+|    \\/     M anipulation  |                                                |
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+version	2;
+format	ascii;
+class	dictionary;
+location	"system";
+object	meshDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+//	Current GEOMETRY TO BE MESHED
+// blower|ceiling|floor|forwardCasing|hubCasing|ISOBellmouth|pillars|PlenumSpaceclaim|
+// rearCasing|vollmerDucting|wallEast|wallNorth|wallSouth|wallWest|master|wallGVI
+// outlet|redistEast|redistNorth
+
+// smallest cell sizes for refinement zone around test section
+
+intakeHeight -1.2;
+fineSmall 0.010;
+extent 0.03;
+fine2 #eval{$fineSmall * 2};
+fine3 #eval{$fine2 * 2};
+bellmouthLipCell #eval{$fineSmall/10};
+bz0 1.276;
+bz1 #eval{$bz0 - $extent};
+
+
+// defining refinment zone location for Nacelle Refinement
+
+lengY 0.8; // based on test section intake width
+lengX 0.8; // based on test section intake height
+// ex. if height is 0.75 to centerline from ground: (0.75 + 0.4)*2 = 1.15*2 = 2.3
+nacX 0.00; //x-position of nacelle attachment to plenum
+nacY 0.00; //y-position of nacelle attachment to plenum
+nacZ 2.3; //z-position offset to intake opening
+nacLengZ 3.5; // fine refinement length of nacelle section
+nacPosA #eval{$nacZ - ($nacLengZ/2)}; // positioning of fine refinement zone to center on testSection
+
+nacLengZb #eval{$nacLengZ + 0.2}; // fine refinement B length of nacelle section
+nacPosB #eval{$nacZ - ($nacLengZb/2)}; // positioning of fine refinement zone B to center on testSection
+
+nacLengZc #eval{$nacLengZ + 0.5}; // fine refinement C length of nacelle section
+nacPosC #eval{$nacZ - ($nacLengZc/2)}; // positioning of fine refinement zone C to center on testSection
+
+lengYb #eval{$lengY + 0.2}; // fine refinement B Y-Length Refinment Reach
+lengYc #eval{$lengYb + 0.2}; // fine refinement B Y-Length Refinment Reach
+
+lengXb #eval{$lengX + 0.2}; // fine refinement B X-Length Refinment Reach
+lengXc #eval{$lengXb + 0.2}; // fine refinement B X-Length Refinment Reach
+
+// general CFmesh refinment start
+maxCellSize	0.15;
+
+surfaceFile	"outputWithEdges.fms";
+
+
+
+boundaryLayers
+{
+    nLayers         2;
+    thicknessRatio  1.2;
+}
+
+
+
+
+localRefinement
+	{
+		"bellmouthInner"
+		{
+		cellSize 0.001;
+		//additionalRefinmentLevels 1;
+		//refinmentThickness 4.5;
+		}
+	}
+	
+localRefinement
+	{
+		"bellmouthOuter"
+		{
+		cellSize 0.008;
+		//additionalRefinmentLevels 1;
+		//refinmentThickness 4.5;
+		}
+	}
+
+localRefinement
+	{
+		"bellmouthLip"
+		{
+		cellSize $bellmouthLipCell;
+		//additionalRefinmentLevels 1;
+		refinmentThickness 0.05;
+		}
+	}
+	
+localRefinement
+	{
+		"plenumSpaceclaim"
+		{
+		cellSize $fine2;
+		//additionalRefinmentLevels 2;
+		//refinmentThickness 4.5;
+		}
+	}
+localRefinement
+	{
+		"wallEast"
+		{
+		cellSize 0.075;
+		additionalRefinmentLevels 2;
+		//refinmentThickness 4.5;
+		}
+	}
+	
+localRefinement
+	{
+		"blower"
+		{
+		cellSize 0.03;
+		//additionalRefinmentLevels 1;
+		//refinmentThickness 4.5;
+		}
+	}
+	
+localRefinement
+	{
+		"redistNorth"
+		{
+		cellSize $fine2;
+		//additionalRefinmentLevels 1;
+		//refinmentThickness 4.5;
+		}
+	}
+	
+localRefinement
+	{
+		"couplerDuctingRect"
+		{
+		cellSize $fine2;
+		//additionalRefinmentLevels 3;
+		//refinmentThickness 1.2;
+		}
+	}
+	
+localRefinement
+	{
+		"ductingLarge"
+		{
+		cellSize $fine2;
+		//additionalRefinmentLevels 3;
+		//refinmentThickness 1.2;
+		}
+	}
+	
+localRefinement
+	{
+		"ductingSmall"
+		{
+		cellSize $fine2;
+		//additionalRefinmentLevels 3;
+		//refinmentThickness 1.2;
+		}
+	}
+
+	
+localRefinement
+	{
+		"redistEast"
+		{
+		cellSize $fine2;
+		//additionalRefinmentLevels 1;
+		//refinmentThickness 4.5;
+		}
+	}
+		
+localRefinement
+	{
+		"pillars"
+		{
+		cellSize 0.03;
+		//additionalRefinmentLevels 1;
+		//refinmentThickness 4.5;
+		}
+	}
+	
+localRefinement
+	{
+		"outflowDist"
+		{
+		cellSize 0.01;
+		additionalRefinmentLevels 3;
+		refinmentThickness 1.2;
+		}
+	}
+	
+localRefinement
+	{
+		"wallGVI"
+		{
+		cellSize 0.008;
+		//additionalRefinmentLevels 3;
+		//refinmentThickness 1.2;
+		}
+	}		
+
+// blower, ceiling, floor, nacelleTestSection, outflowDist,
+// outlet, pillars, redistEast, redistNorth, wallEast, wallNorth,
+// wallSouth, wallWest, wallGVI
+
+objectRefinements
+{
+
+	fineRefine1
+	{
+		type		box;
+		cellSize	$fineSmall;
+		centre		($nacX $nacY $nacPosA);
+		lengthX		$lengX;
+		lengthY		$lengY;
+		lengthZ		$nacLengZ;
+	}
+	
+	fineRefine2
+	{
+		type		box;
+		cellSize	$fine2;
+		centre		($nacX $nacY $nacPosB);
+		lengthX		$lengXb;
+		lengthY		$lengYb;
+		lengthZ		$nacLengZb;
+	}
+	
+
+	fineRefine3
+	{
+		type		box;
+		cellSize	$fine3;
+		centre		($nacX $nacY $nacPosC);
+		lengthX		$lengXc; 
+		lengthY		$lengYc;
+		lengthZ		$nacLengZc;
+	}
+	
+	
+	
+	floorRefine
+	{
+		type		box;
+		cellSize	0.06;
+		centre		($intakeHeight 0 $nacZ);
+		lengthX		0.2; 
+		lengthY		2;
+		lengthZ		2;
+	}
+
+
+	roomRefine1		//set room cell size on nacelle side smaller than rest of room
+	{
+		type		box;
+		cellSize	0.08;
+		centre		(-0.756 0.0 -2.68548); // set to corner of room behind LSF rig
+		lengthX		5; 
+		lengthY		3; 
+		lengthZ		10;
+	}
+
+	roomRefine2		//set room cell size on nacelle side smaller than rest of room
+	{
+		type		box;
+		cellSize	0.12;
+		centre		(-0.756 0.0 -2.68548); // set to corner of room behind LSF rig
+		lengthX		6; 
+		lengthY		4; 
+		lengthZ		12; 
+	}
+
+
+	
+
+
+	bellmouthEdgeRefine
+	{
+	type				hollowCone;
+	cellSize			$bellmouthLipCell;
+	//additionalRefinementLevels	4;
+	p0				(0.0 0.0 $bz0);
+	p1				(0.0 0.0 $bz1);
+	radius0_Inner			0.340;
+	radius0_Outer			0.360;
+	radius1_Inner			0.340;
+	radius1_Outer			0.360;
+	}
+
+
+}
+
+keepCellsIntersectingPatches
+{
+	"wallGVI"
+	{
+		keepCells 1; // 1 active or 0 inactive
+	}
+}
+
+// ************************************************************************* //

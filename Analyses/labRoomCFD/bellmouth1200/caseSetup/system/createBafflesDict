@@ -1,0 +1,80 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      createBafflesDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Whether to convert internal faces only (so leave boundary faces intact).
+// This is only relevant if your face selection type can pick up boundary
+// faces.
+internalFacesOnly true;
+
+// Baffles to create.
+baffles
+{
+    baffleFaceSet
+    {
+        //- Use predefined faceZone to select faces and orientation.
+        type        faceZone;
+        zoneName    wallZone;
+        flip	false;
+
+        patches
+        {
+            master
+            {
+            	type	wall;
+            	name	master;
+
+            patchFields
+            {
+                epsilon
+                {
+                    type            epsilonWallFunction;
+                    value           uniform 0.023066484;
+                }
+                k
+                {
+                    type            kqRWallFunction;
+                    value           uniform 0.0234375;
+                }
+                nut
+                {
+                    type            nutUSpaldingWallFunction;
+        	    value           uniform 0;
+                }
+                omega
+                {
+                    type            omegaWallFunction;
+                    blended         true;
+                    value           uniform 1.0e-8;
+        	}
+                p
+                {
+                    type            zeroGradient;
+                }
+                U
+                {
+                    type            noSlip;
+                }
+            }
+
+            }
+            
+            slave { ${..master}} 
+            
+        }
+    }
+}
+
+// ************************************************************************* //

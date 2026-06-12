@@ -1,0 +1,74 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      omega;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 -1 0 0 0 0];
+
+/*
+Length Scale (l): use 7% of inlet height
+EX: 0.2m inlet height
+l = 0.07*0.2 = 0.014 
+
+Model Coeffiecnet (Cu) = 0.09 for k-E and k-w turbulence models
+
+w= (Cu^-0.25)*(k^(0.5))/l
+w= (0.09^-0.25)*(0.0234375^(0.5))/0.014 = 19.964892643
+*/
+
+internalField   uniform 19.964892643; // from https://www.cfd-online.com/Wiki/Turbulence_free-stream_boundary_conditions
+										// OpenFOAM is set up like Fluent, and the equation is (0.09^-0.25)*k^(0.5)/l
+
+										// where l is calculated exactly the way you did
+
+boundaryField
+{
+    outlet
+    {
+        type            zeroGradient; // same advice as for k
+    }
+
+    redistEast
+    {
+        type            fixedValue; // again, could use a length-scale based boundary condition, but fixedValue is OK here
+        value           $internalField;
+    }
+
+    redistNorth
+    {
+        type            fixedValue;
+        value           $internalField;
+    }
+
+    "(blower|ceiling|couplerDuctingRect|ductingLarge|ductingSmall|floor|pillars|plenumSpaceclaim|wallEast|wallNorth|wallSouth|wallWest)"
+    {
+        type            omegaWallFunction; // wall function is always needed
+        blended         true;
+        value           uniform 1.0e-8; // near-wall value should be small but nonzero
+    }
+
+// LSF Rig test-section specific entries, use to change to slip on test section etc
+
+    "(bellmouthInner|bellmouthLip|bellmouthOuter|centerCasingInner|centerCasingOuter|forwardCasingInner|forwardCasingOuter|frontHub|rearCasingInner|rearCasingOuter|rearHub)"
+    {
+	//type		noSlip;		// slip;
+	type            omegaWallFunction; // wall function is always needed
+        blended         true;
+        value           uniform 1.0e-8; // near-wall value should be small but nonzero
+    }
+
+}
+
+
+// ************************************************************************* //

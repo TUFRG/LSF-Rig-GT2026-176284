@@ -1,0 +1,62 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      epsilon;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -3 0 0 0 0];
+
+/*
+epsilon = Cu((k^(3/2))/l) = 0.09((0.0234375^(3/2))/(0.014)) = 0.023066484
+
+*/
+internalField   uniform 0.023066484;
+
+boundaryField
+{
+    outlet
+    {
+        type            zeroGradient; // same advice as for k
+    }
+    
+    redistEast
+    {
+        type            fixedValue;
+        value           $internalField;
+    }
+    
+    redistNorth
+    {
+        type            fixedValue;
+        value           $internalField;
+    }
+	
+    "(blower|ceiling|couplerDuctingRect|ductingLarge|ductingSmall|floor|pillars|plenumSpaceclaim|wallEast|wallNorth|wallSouth|wallWest)"
+    {
+        type            epsilonWallFunction; // wall function is always needed
+        value           $internalField; // taken from foam tutorial setups
+    }
+
+// LSF Rig test-section specific entries, use to change to slip on test section etc
+
+    "(hubFront|hubRear|nacelleInner|nacelleLipFront|nacelleLipInner|nacelleLipOuter|nacelleOuter|rearCasingInner|rearCasingOuter|nacelleOuterCurve|nacelleOuterTop|nacelleOuterCasingFront|nacelleOuterCasingFlange|nacelleOuterCasingRear|nacelleOuterCasingIntercept)"
+    {
+	//type		noSlip;		// slip;
+        type            epsilonWallFunction; // wall function is always needed
+        value           $internalField; // taken from foam tutorial setups
+    }
+  
+}
+
+
+// ************************************************************************* //

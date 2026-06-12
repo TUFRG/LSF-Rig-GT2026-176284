@@ -1,0 +1,62 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+massFlowRate 6.62;
+dens 1.2;
+volFlowRate #eval{$massFlowRate / $dens};
+inletFlowRate #eval{$volFlowRate / 2}; // #eval{$volFlowRate * 0.8 / 2}; 
+
+boundaryField
+{
+    outlet
+    {
+        type            inletOutlet;
+        inletValue		uniform (0 0 0);
+        value			uniform (0 0 0);
+    }
+
+    redistNorth // looking into nacelle, inlet is on left hand side	
+    {
+        type            flowRateInletVelocity; // always normal to patch
+        volumetricFlowRate  constant $inletFlowRate;
+    }
+
+    redistEast // looking into nacelle, inlet is on right hand side
+    {
+        type            flowRateInletVelocity; // always normal to patch
+        volumetricFlowRate constant $inletFlowRate;
+    }
+	
+    "(blower|ceiling|couplerDuctingRect|ductingLarge|ductingSmall|floor|pillars|plenumSpaceclaim|wallEast|wallNorth|wallSouth|wallWest)"
+    {
+        type            noSlip;
+    }
+
+// LSF Rig test-section specific entries, use to change to slip on test section etc
+
+    "(hubFront|hubRear|nacelleInner|nacelleLipFront|nacelleLipInner|nacelleLipOuter|nacelleOuter|rearCasingInner|rearCasingOuter|nacelleOuterCurve|nacelleOuterTop|nacelleOuterCasingFront|nacelleOuterCasingFlange|nacelleOuterCasingRear|nacelleOuterCasingIntercept)"
+    {
+	type		noSlip;		// slip;
+    }
+
+}
+
+
+// ************************************************************************* //

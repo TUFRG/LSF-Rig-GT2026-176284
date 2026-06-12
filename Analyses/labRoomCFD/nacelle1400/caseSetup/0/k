@@ -1,0 +1,68 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2312                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      k;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -2 0 0 0 0];
+
+/* 
+to calculate k
+
+k = (3/2)(U^2)(L^2) where U is the velocity at the inlet and I is the turbulence intensity
+
+5% used for case shown
+
+k = (1.5)(2.5^2)(0.05^2) = 0.0234375
+*/
+
+internalField   uniform 0.0234375;
+
+boundaryField
+{
+    outlet
+    {
+        type            zeroGradient; // outlets for all fields except pressure/velocity are ALWAYS zeroGradient
+    }
+
+    redistEast
+    {
+        type            fixedValue; // could also use a turbulence intensity setting, but I see you've chosen a value for 5% TI
+        value           $internalField;
+    }
+
+    redistNorth
+    {
+        type            fixedValue;
+        value           $internalField;
+    }
+	
+    "(blower|ceiling|couplerDuctingRect|ductingLarge|ductingSmall|floor|pillars|plenumSpaceclaim|wallEast|wallNorth|wallSouth|wallWest)"
+    {
+        type            kqRWallFunction; // walls should use the kqRWallFunction, though this is really just equivalent to zeroGradient
+        value           $internalField;
+    }
+
+// LSF Rig test-section specific entries, use to change to slip on test section etc
+
+    "(hubFront|hubRear|nacelleInner|nacelleLipFront|nacelleLipInner|nacelleLipOuter|nacelleOuter|rearCasingInner|rearCasingOuter|nacelleOuterCurve|nacelleOuterTop|nacelleOuterCasingFront|nacelleOuterCasingFlange|nacelleOuterCasingRear|nacelleOuterCasingIntercept)"
+    {
+	//type		noSlip;		// slip;
+        type            kqRWallFunction; // walls should use the kqRWallFunction, though this is really just equivalent to zeroGradient
+        value           $internalField;
+    }
+  
+}
+
+
+// ************************************************************************* //
